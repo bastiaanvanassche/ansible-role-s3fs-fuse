@@ -1,0 +1,2 @@
+---
+s3fs_fuse_cache_folder: /tmp/cache

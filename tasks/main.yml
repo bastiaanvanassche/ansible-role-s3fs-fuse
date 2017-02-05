@@ -1,0 +1,45 @@
+---
+- name: install dependent packages for s3fs-fuse
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+  - automake
+  - autotools-dev
+  - g++
+  - git
+  - libcurl4-gnutls-dev
+  - libfuse-dev
+  - libssl-dev
+  - libxml2-dev
+  - make
+  - pkg-config
+
+- name: retrieve s3fs-fuse v{{ s3fs_fuse_version }} from github
+  get_url: url=https://github.com/s3fs-fuse/s3fs-fuse/archive/v{{ s3fs_fuse_version }}.tar.gz dest=/usr/src/s3fs-fuse-{{ s3fs_fuse_version }}.tar.gz
+- name: extract tar.gz of s3fs-fuse
+  unarchive:
+    src: /usr/src/s3fs-fuse-{{ s3fs_fuse_version }}.tar.gz
+    remote_src: yes
+    dest: /usr/src
+    creates: s3fs-fuse-{{ s3fs_fuse_version }}
+
+- name: building and installing s3fs-fuse v{{ s3fs_fuse_version }}
+  command: "{{ item }} chdir=/usr/src/s3fs-fuse-{{ s3fs_fuse_version }}"
+  with_items:
+     - ./autogen.sh
+     - ./configure --prefix=/usr/
+     - make
+     - make install
+
+- name: copy AWS credentials to passwd-s3fs file
+  template: src=passwd-s3fs.j2 dest=/etc/passwd-s3fs mode=0640
+- name: run chmod {{ s3fs_fuse_mount_point_permissions }} on mount folder {{ s3fs_fuse_mount_point }}
+  file: path={{ s3fs_fuse_mount_point }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
+- name: run chmod {{ s3fs_fuse_mount_point_permissions }} on cache folder {{ s3fs_fuse_cache_folder }}
+  file: path={{ s3fs_fuse_cache_folder }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
+- name: mount folder {{ s3fs_fuse_mount_point }} to s3 bucket {{ s3fs_fuse_bucket }} using s3fs
+  command: s3fs -o use_cache={{ s3fs_fuse_cache_folder }} {{ s3fs_fuse_bucket }} {{ s3fs_fuse_mount_point }} -o allow_other -o nonempty
+  register: command_result
+# make sure this task is idempotent: ignore the 'already mounted' error thrown by s3fs.
+# https://groups.google.com/forum/#!topic/ansible-project/cIaQTmY3ZLE
+  failed_when: >
+    'according to mtab, s3fs is already mounted' not in command_result.stderr and command_result.rc == 1

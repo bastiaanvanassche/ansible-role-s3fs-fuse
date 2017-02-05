@@ -1,0 +1,7 @@
+---
+s3fs_fuse_version: "1.80"
+s3fs_fuse_access_key_id:
+s3fs_fuse_secret_access_key:
+s3fs_fuse_bucket:
+s3fs_fuse_mount_point: /mnt/s3
+s3fs_fuse_mount_point_permissions: "0777"

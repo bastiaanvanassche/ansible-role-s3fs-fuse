@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Bastiaan Van Assche
+  description: Ansible role for mounting an AWS S3 bucket via FUSE.
+  license: GPL v2
+  min_ansible_version: 1.9
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
+    - trusty
+    - precise
+  galaxy_tags:
+    - s3s
+    - s3fs-fuse
+    - fuse
+  categories:
+  - system
+dependencies: []
