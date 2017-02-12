@@ -36,8 +36,16 @@
   file: path={{ s3fs_fuse_mount_point }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
 - name: run chmod {{ s3fs_fuse_mount_point_permissions }} on cache folder {{ s3fs_fuse_cache_folder }}
   file: path={{ s3fs_fuse_cache_folder }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
+
 - name: mount folder {{ s3fs_fuse_mount_point }} to s3 bucket {{ s3fs_fuse_bucket }} using s3fs
-  command: s3fs -o use_cache={{ s3fs_fuse_cache_folder }} {{ s3fs_fuse_bucket }} {{ s3fs_fuse_mount_point }} -o allow_other -o nonempty
+  command: >
+    s3fs
+    -o use_cache={{ s3fs_fuse_cache_folder }}
+    -o url={{ s3fs_fuse_url }}
+    {% for option in s3fs_fuse_option_flags %}
+    -o {{ option }}
+    {% endfor %}
+    {{ s3fs_fuse_bucket }} {{ s3fs_fuse_mount_point }}
   register: command_result
   tags:
     - production
