@@ -27,11 +27,22 @@
      - make install
 
 - name: copy AWS credentials to passwd-s3fs file
-  template: src=passwd-s3fs.j2 dest=/etc/passwd-s3fs mode=0640
+  template:
+    src="passwd-s3fs.j2"
+    dest="/etc/passwd-s3fs mode=0640"
+    owner="root"
+    group="root"
+    mode=0400
+
 - name: run chmod {{ s3fs_fuse_mount_point_permissions }} on mount folder {{ s3fs_fuse_mount_point }}
   file: path={{ s3fs_fuse_mount_point }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
+
 - name: run chmod {{ s3fs_fuse_mount_point_permissions }} on cache folder {{ s3fs_fuse_cache_folder }}
   file: path={{ s3fs_fuse_cache_folder }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
+
+- name: See if {{ s3fs_fuse_mount_point }} Is Already Mounted
+  command: mount
+  register: mount_list
 
 - name: mount folder {{ s3fs_fuse_mount_point }} to s3 bucket {{ s3fs_fuse_bucket }} using s3fs
   command: >
@@ -47,3 +58,4 @@
 # https://groups.google.com/forum/#!topic/ansible-project/cIaQTmY3ZLE
   failed_when: >
     'according to mtab, s3fs is already mounted' not in command_result.stderr and command_result.rc == 1
+  when: '{{ s3fs_fuse_mount_point }}' not in mount_list.stdout
