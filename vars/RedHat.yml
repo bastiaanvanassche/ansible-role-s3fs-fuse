@@ -1,0 +1,12 @@
+---
+
+s3fs_fuse_package_dependencies:
+  - "automake"
+  - "fuse"
+  - "fuse-devel"
+  - "gcc-c++"
+  - "git"
+  - "libcurl-devel"
+  - "libxml2-devel"
+  - "make"
+  - "openssl-devel"

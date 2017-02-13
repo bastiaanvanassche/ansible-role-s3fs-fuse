@@ -1,17 +1,11 @@
 ---
+
+- name: Include OS-specific Vars
+  include_vars: "{{ ansible_os_family }}.yml"
+
 - name: install dependent packages for s3fs-fuse
   apt: pkg={{ item }} state=present update_cache=yes
-  with_items:
-  - automake
-  - autotools-dev
-  - g++
-  - git
-  - libcurl4-gnutls-dev
-  - libfuse-dev
-  - libssl-dev
-  - libxml2-dev
-  - make
-  - pkg-config
+  with_items: "{{ s3fs_fuse_package_dependencies }}"
 
 - name: retrieve s3fs-fuse v{{ s3fs_fuse_version }} from github
   get_url: url=https://github.com/s3fs-fuse/s3fs-fuse/archive/v{{ s3fs_fuse_version }}.tar.gz dest=/usr/src/s3fs-fuse-{{ s3fs_fuse_version }}.tar.gz
