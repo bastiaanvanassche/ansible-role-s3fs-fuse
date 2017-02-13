@@ -60,4 +60,4 @@
 # https://groups.google.com/forum/#!topic/ansible-project/cIaQTmY3ZLE
   failed_when: >
     'according to mtab, s3fs is already mounted' not in command_result.stderr and command_result.rc == 1
-  when: '{{ s3fs_fuse_mount_point }}' not in mount_list.stdout
+  when: s3fs_fuse_mount_point not in mount_list.stdout
