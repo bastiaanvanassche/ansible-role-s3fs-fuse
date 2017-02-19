@@ -39,6 +39,8 @@
 - name: mount folder {{ s3fs_fuse_mount_point }} to s3 bucket {{ s3fs_fuse_bucket }} using s3fs
   command: s3fs -o use_cache={{ s3fs_fuse_cache_folder }} {{ s3fs_fuse_bucket }} {{ s3fs_fuse_mount_point }} -o allow_other -o nonempty
   register: command_result
+  tags:
+    - production
 # make sure this task is idempotent: ignore the 'already mounted' error thrown by s3fs.
 # https://groups.google.com/forum/#!topic/ansible-project/cIaQTmY3ZLE
   failed_when: >
