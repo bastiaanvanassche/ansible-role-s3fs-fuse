@@ -1,4 +1,5 @@
 # Ansible Role: s3fs-fuse
+[![Build Status](https://travis-ci.org/bastiaanvanassche/ansible-role-s3fs-fuse.svg?branch=automated_tests)](https://travis-ci.org/bastiaanvanassche/ansible-role-s3fs-fuse)
 
 Ansible role for mounting an AWS S3 bucket via FUSE. The role installs and configures [s3fs-fuse](https://github.com/s3fs-fuse/s3fs-fuse) on Ubuntu.
 
