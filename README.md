@@ -26,7 +26,9 @@ Available variables are listed below, along with the default values:
 
 None
 
-## Example Playbook
+## Example Playbooks
+
+### Simple auth via keys
 
     - hosts: all
       roles:
@@ -34,6 +36,24 @@ None
           s3fs_fuse_bucket: ansible-s3fs-fuse
           s3fs_fuse_access_key_id: <your aws access key id>
           s3fs_fuse_secret_access_key: <your aws secret access key>
+
+### Use EC2 instance profile auth and custom options
+
+```
+- hosts: "tag_class_fuse"
+  roles:
+    - role: bastiaanvanassche.s3fs-fuse
+      s3fs_fuse_bucket: ansible-s3fs-fuse
+      s3fs_fuse_mount_point: "/media/fuseS3"
+      s3fs_fuse_cache_folder: "/tmp/fuseS3cache"
+      s3fs_fuse_mount_point_permissions: "0777"
+      s3fs_fuse_option_flags:
+        - "iam_role='iam_role_name'" # Role with sufficient access to the bucket
+        - "endpoint='eu-west-1'"
+        - "allow_other"
+        - "nonempty"
+
+```
 
 ## License
 
