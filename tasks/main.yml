@@ -34,6 +34,7 @@
     owner="root"
     group="root"
     mode=0640
+  when: s3fs_fuse_access_key_id != ""
 
 - name: run chmod {{ s3fs_fuse_mount_point_permissions }} on mount folder {{ s3fs_fuse_mount_point }}
   file: path={{ s3fs_fuse_mount_point }} state=directory mode={{ s3fs_fuse_mount_point_permissions }}
